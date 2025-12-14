@@ -1,0 +1,28 @@
+{
+    "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "/usr/local/texlive/2025/bin/universal-darwin/latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "%DOC%"
+      ]
+    }
+  ],
+
+  // ✅ Define how to build (you can customize later)
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk (TeX Live 2025)",
+      "tools": ["latexmk"]
+    }
+  ],
+
+  // ✅ (Optional) explicitly prepend TeX Live to PATH inside VS Code
+  "terminal.integrated.env.osx": {
+    "PATH": "/usr/local/texlive/2025/bin/universal-darwin:${env:PATH}"
+  }
+}

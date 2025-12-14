@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{pgfplots}
+\usepackage{csvsimple}
+\usepackage{subcaption}
+\usepackage[a4paper, total={7in, 10in}]{geometry} % Makes the page wider
+
+\begin{document}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth} % Increased width of the minipage
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=8cm, height=6cm, % Increased figure size
+                xlabel={Time Steps},
+                ylabel={Max Fraction of Corrupted Symbols (\%)},
+                title={Corruption Graph},
+                grid=major,
+                legend pos=north east,
+                mark repeat=30 % Fewer markers (every 30th point)
+            ]
+            \addplot table [x=Time_Step, y=Corruption_Rows_1, col sep=comma] {simulation_data.csv}; \addlegendentry{Rows=1};
+            \addplot table [x=Time_Step, y=Corruption_Rows_5, col sep=comma] {simulation_data.csv}; \addlegendentry{Rows=5};
+            \addplot table [x=Time_Step, y=Corruption_Rows_10, col sep=comma] {simulation_data.csv}; \addlegendentry{Rows=10};
+            \addplot table [x=Time_Step, y=Corruption_Rows_25, col sep=comma] {simulation_data.csv}; \addlegendentry{Rows=25};
+            \end{axis}
+        \end{tikzpicture}
+    \end{minipage}
+    \quad % Add more spacing between plots
+    \begin{minipage}{0.48\textwidth} % Increased width of the minipage
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=8cm, height=6cm, % Increased figure size
+                xlabel={Time Steps},
+                ylabel={Max Number of Peers},
+                title={Connection Graph},
+                grid=major,
+                legend pos=north east,
+                mark repeat=30 % Fewer markers (every 30th point)
+            ]
+            \addplot table [x=Time_Step, y=Connections_Rows_1, col sep=comma] {simulation_data.csv}; \addlegendentry{Rows=1};
+            \addplot table [x=Time_Step, y=Connections_Rows_5, col sep=comma] {simulation_data.csv}; \addlegendentry{Rows=5};
+            \addplot table [x=Time_Step, y=Connections_Rows_10, col sep=comma] {simulation_data.csv}; \addlegendentry{Rows=10};
+            \addplot table [x=Time_Step, y=Connections_Rows_25, col sep=comma] {simulation_data.csv}; \addlegendentry{Rows=25};
+            \end{axis}
+        \end{tikzpicture}
+    \end{minipage}
+    \caption{Simulation Results: Corruption and Connection Graphs}
+\end{figure}
+
+\end{document}

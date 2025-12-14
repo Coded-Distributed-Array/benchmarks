@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage{pgfplots}
+\usepackage{csvsimple}
+\usepackage{subcaption}
+\usepackage[a4paper, total={7in, 10in}]{geometry} % Makes the page wider
+
+\begin{document}
+
+\begin{figure}[htbp]
+    \centering
+
+    % First plot: k1 vs k2
+    \begin{minipage}{0.48\textwidth}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=6cm, height=3cm,
+                xlabel={k2},
+                ylabel={k1},
+                grid=major,
+                legend style={at={(0.5,1.1)}, anchor=south, legend columns=2},
+                mark repeat=40,
+                xmode=log, % Logarithmic x-axis
+                ymode=log, % Logarithmic y-axis
+            ]
+
+            \addplot table [x=k2, y=k1, col sep=comma] {estimates_2_data_10_100000.csv}; \addlegendentry{$N = 100000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=k1, col sep=comma] {estimates_2_data_10_10000.csv}; \addlegendentry{$N = 10000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=k1, col sep=comma] {estimates_2_data_10_5000.csv}; \addlegendentry{$N = 5000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=k1, col sep=comma] {estimates_2_data_10_1000.csv}; \addlegendentry{$N = 1000$, $\epsilon=0.1$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{minipage}
+
+    % join_complexity vs k2
+    \begin{minipage}{0.48\textwidth}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=6cm, height=3cm,
+                xlabel={k2},
+                ylabel={Join Complexity},
+                grid=major,
+                %legend pos=north east,
+                mark repeat=40,
+                xmode=log, % Logarithmic x-axis
+                ymode=log, % Logarithmic y-axis
+            ]
+            \addplot table [x=k2, y=join_complexity, col sep=comma] {estimates_2_data_10_100000.csv}; %\addlegendentry{$N = 100000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=join_complexity, col sep=comma] {estimates_2_data_10_10000.csv}; %\addlegendentry{$N = 10000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=join_complexity, col sep=comma] {estimates_2_data_10_5000.csv}; %\addlegendentry{$N = 5000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=join_complexity, col sep=comma] {estimates_2_data_10_1000.csv}; %\addlegendentry{$N = 1000$, $\epsilon=0.1$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{minipage}
+
+    %  get_complexity vs k2
+    \begin{minipage}{0.48\textwidth}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=6cm, height=3cm,
+                xlabel={k2},
+                ylabel={Get Complexity},
+                grid=major,
+                mark repeat=40,
+                xmode=log, % Logarithmic x-axis
+                ymode=log, % Logarithmic y-axis
+            ]
+            \addplot table [x=k2, y=get_complexity, col sep=comma] {estimates_2_data_10_100000.csv}; %\addlegendentry{$N = 100000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=get_complexity, col sep=comma] {estimates_2_data_10_10000.csv}; %\addlegendentry{$N = 10000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=get_complexity, col sep=comma] {estimates_2_data_10_5000.csv}; %\addlegendentry{$N = 5000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=get_complexity, col sep=comma] {estimates_2_data_10_1000.csv}; %\addlegendentry{$N = 1000$, $\epsilon=0.1$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{minipage}
+
+    %  store_complexity vs k2
+    \begin{minipage}{0.48\textwidth}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=6cm, height=3cm,
+                xlabel={k2},
+                ylabel={Store Complexity},
+                grid=major,
+                mark repeat=40,
+                xmode=log, % Logarithmic x-axis
+                ymode=log, % Logarithmic y-axis
+            ]
+            \addplot table [x=k2, y=store_complexity, col sep=comma] {estimates_2_data_10_100000.csv}; %\addlegendentry{$N = 100000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=store_complexity, col sep=comma] {estimates_2_data_10_10000.csv}; %\addlegendentry{$N = 10000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=store_complexity, col sep=comma] {estimates_2_data_10_5000.csv}; %\addlegendentry{$N = 5000$, $\epsilon=0.1$};
+            \addplot table [x=k2, y=store_complexity, col sep=comma] {estimates_2_data_10_1000.csv}; %\addlegendentry{$N = 1000$, $\epsilon=0.1$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{minipage}
+
+    \caption{Complexity Analysis: k1 vs k2, Data Complexity vs k2, Join Complexity vs k2, and Store Complexity vs k2}
+\end{figure}
+
+
+\end{document}
