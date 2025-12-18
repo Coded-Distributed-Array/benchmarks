@@ -1,3 +1,3 @@
-# RobustCRDA - Generating Plots
+# RobustCDA - Generating Plots
 
-This repository contains Python scripts to generate plots for the _RobustCRDA_ paper.
+This repository contains Python scripts to generate plots for the _RobustCDA_ paper.
