@@ -11,7 +11,7 @@ if __name__ == "__main__":
     lifetime_per_party = n_total // churn
 
     # Range of row values to iterate over
-    row_range = [1, 5, 10, 20, 50, 90]
+    row_range = [40, 90]
 
     # Define different markers and colors for each plot
     markers = ['o', 's', 'D', '^', 'v', '<', '>', 'p', '*', 'h']

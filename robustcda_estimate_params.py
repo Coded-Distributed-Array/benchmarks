@@ -59,7 +59,7 @@ def calculate_rhs(
 
     _, decay = coeffs
 
-    ceiling_term = math.ceil((T + 2) / (delta_overlap - delta_overlap_min + 1))
+    ceiling_term = math.ceil((T + 3) / (delta_overlap - delta_overlap_min + 1))
 
     h_epsilon = binary_entropy(epsilon)
     term1_base2 = pow(2, h_epsilon * k2)
@@ -144,6 +144,16 @@ def find_max_k2_with_k1_1(
 
     return best_k2
 
+def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, K: int, L_msg: int = 1) -> float:
+    """
+    Calculates the expected communication complexity of the STORE operation.
+
+    Formula:
+        (n_max/(k1*k2) * L_msg + 3*n_hon_max*n_max/(k1*k2**2)) * L_msg / K
+    """
+    term1 = n_max / (k1 * k2) * L_msg
+    term2 = (3 * n_hon_max * n_max) / (k1 * (k2 ** 2)) * L_msg / K
+    return term1 + term2
 
 def generate_rows(
     epsilon: float,
@@ -159,12 +169,17 @@ def generate_rows(
     if max_k2 is None:
         return []
 
+    n_max = 2 * N
+    n_hon_max = N
+
     rows = []
     for k2 in range(max_k2, 0, -1):
         k1 = find_max_k1(k2, epsilon, N, k_chunks, target_delta)
         if k1 is None:
             continue
-        rows.append((k_chunks, epsilon, N, k2, k1))
+        data_duplication = N / (k2 * k_chunks) 
+        store_complexity = calculate_store_complexity(k1, k2, n_max, n_hon_max, k_chunks)
+        rows.append((k_chunks, epsilon, N, k2, k1, data_duplication, store_complexity))
 
     return rows
 
@@ -173,7 +188,7 @@ def write_rows(
     rows: Sequence[Tuple[int, float, int, int, int, float, float]],
     filename: str,
 ) -> None:
-    headers = ["k", "epsilon", "N", "k2", "k1"]
+    headers = ["k", "epsilon", "N", "k2", "k1", "data_duplication", "store_complexity"]
     with open(filename, mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(headers)
@@ -184,7 +199,7 @@ if __name__ == "__main__":
     N_values = [2500, 5000, 10000, 100000]
     epsilon_nominator_values = [5, 10]
     target_delta = 1e-9
-    k_values = [16]
+    k_values = [8, 16]
 
     for k_chunks in k_values:
         for eps_nom in epsilon_nominator_values:

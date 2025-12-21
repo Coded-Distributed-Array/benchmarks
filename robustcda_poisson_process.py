@@ -47,14 +47,14 @@ def sample_one_cell(
         return False
 
     # ---- Phase B ----
-    column = grid.column_nodes(col)
-    if len(column) < k:
+    piece_nodes = grid.column_nodes(col)
+    total_success = 0
+    for C in piece_nodes:
+        if nodes[C].request(now, mu_chunk, d_chunk, rng):
+            total_success += 1
+    
+    if total_success < k:
         return False
-
-    chosen = rng.sample(column, k)
-    for C in chosen:
-        if not nodes[C].request(now, mu_chunk, d_chunk, rng):
-            return False
 
     return True
 
@@ -74,11 +74,11 @@ def bench_parallel_sampling():
     samples_per_node = 75
     total_samples = N * samples_per_node
 
-    Ms = [50, 100, 200, 300, 400, 500, 1000, 1500]
+    Ms = [2000, 2500, 5000, 10000, 20000, 100000]
 
     # ---- service + deadline ----
     mu_cell = 100
-    mu_chunk = 1000
+    mu_chunk = 2000
     d_cell = 0.5
     d_chunk = 0.05
 

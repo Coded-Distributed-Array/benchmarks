@@ -237,8 +237,8 @@ def generate_rows(epsilon: float, N: int, target_delta: float = 1e-9):
     if max_k2 is None:
         return []
 
-    n_max = 5 * N
-    n_hon_max = 2 * N
+    n_max = 2 * N
+    n_hon_max = N
 
     rows = []
     # For each k2 value from max down to 1
@@ -246,19 +246,18 @@ def generate_rows(epsilon: float, N: int, target_delta: float = 1e-9):
         k1 = find_max_k1(k2, epsilon, N, target_delta)
         if k1 is not None:
             # we have found a valid k1, now compute complexities
-            # data_complexity = 1.0 / k2
+            data_duplication = N / (k2) 
             # join_complexity = calculate_joining_complexity(k1, k2, n_max)
             # get_complexity = calculate_get_complexity(k1, k2, n_max, n_hon_max)
-            # store_complexity = calculate_store_complexity(k1, k2, n_max, n_hon_max)
-            rows.append((epsilon, N, k2, k1))
+            store_complexity = calculate_store_complexity(k1, k2, n_max, n_hon_max)
+            rows.append((epsilon, N, k2, k1, data_duplication, store_complexity))
     return rows
 
 
 
 if __name__ == "__main__":
 
-    headers = ["epsilon", "N", "k2", "k1"]
-
+    headers = ["epsilon", "N", "k2", "k1", "data_duplication", "store_complexity"]
     N_values = [2500, 5000, 10000, 100000]
     epsilon_nominator_values = [5, 10]
     target_delta = 1e-9
@@ -267,6 +266,7 @@ if __name__ == "__main__":
         for N in N_values:
             eps = eps_nom / 100
             rows = generate_rows(eps, N, target_delta)
+            print(rows)
 
             if not rows:
                 print(f"[WARN] No data for eps={eps}, N={N}")
@@ -277,7 +277,7 @@ if __name__ == "__main__":
             clean_rows = [
                 row for row in rows
                 if row is not None
-                and len(row) == 4
+                and len(row) == 6
                 and all(v is not None for v in row)
             ]
 
