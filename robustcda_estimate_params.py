@@ -149,10 +149,11 @@ def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, K: 
     Calculates the expected communication complexity of the STORE operation.
 
     Formula:
-        (n_max/(k1*k2) * L_msg + 3*n_hon_max*n_max/(k1*k2**2)) * L_msg / K
+        (n_max/(k1*k2) * L_msg + 3*n_hon_max*n_max/(k1*k2**2)) * L_msg
     """
-    term1 = n_max / (k1 * k2) * L_msg
-    term2 = (3 * n_hon_max * n_max) / (k1 * (k2 ** 2)) * L_msg / K
+    commitment_size = 48 + 96
+    term1 = n_max / (k1 * k2) * (L_msg + commitment_size)
+    term2 = (3 * n_hon_max * n_max) / (k1 * (k2 ** 2)) * (L_msg / K + 48 + 96)
     return term1 + term2
 
 def generate_rows(
@@ -178,7 +179,7 @@ def generate_rows(
         if k1 is None:
             continue
         data_duplication = N / (k2 * k_chunks) 
-        store_complexity = calculate_store_complexity(k1, k2, n_max, n_hon_max, k_chunks)
+        store_complexity = calculate_store_complexity(k1, k2, n_max, n_hon_max, k_chunks, L_msg=512)
         rows.append((k_chunks, epsilon, N, k2, k1, data_duplication, store_complexity))
 
     return rows

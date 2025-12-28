@@ -2,20 +2,26 @@
 
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
-\pgfplotsset{
-    rdaN2500/.style={green, solid, mark=*},
-    rdaN5000/.style={gray, solid, mark=square*},
-    rdaN10000/.style={purple, solid, mark=triangle*},
-    rdaN100000/.style={yellow, solid, mark=x},
-}
 \usepackage[a4paper,margin=0.1cm]{geometry}
+
+% ================= CUSTOM COLOR + MARKER CYCLE =================
+\pgfplotscreateplotcyclelist{crda_rda_cycle}{
+% --- CRDA ---
+{blue,   solid,  mark=*},
+{red,    solid,  mark=square*},
+{brown,  solid,  mark=triangle*},
+% --- RDA ---
+{green,  dashed, mark=*},
+{gray,   dashed, mark=square*},
+{purple, dashed, mark=triangle*},
+}
 
 \begin{document}
 
 \begin{figure*}[t]
 \centering
 
-% ===================== GLOBAL LEGEND (CENTERED) =====================
+% ================= GLOBAL LEGEND =================
 \begin{tikzpicture}
 \begin{axis}[
     hide axis,
@@ -30,35 +36,32 @@
         font=\small
     },
 ]
-\addlegendimage{blue, solid, mark=*}
+\addlegendimage{blue,   solid,  mark=*}
 \addlegendentry{CRDA $N = 2500$}
-\addlegendimage{rdaN2500}
-\addlegendentry{RDA $N = 2500$}
-
-\addlegendimage{red, solid, mark=square*}
+\addlegendimage{red,    solid,  mark=square*}
 \addlegendentry{CRDA $N = 5000$}
-\addlegendimage{rdaN5000}
-\addlegendentry{RDA $N = 5000$}
-
-\addlegendimage{brown, solid, mark=triangle*}
+\addlegendimage{brown,  solid,  mark=triangle*}
 \addlegendentry{CRDA $N = 10000$}
-\addlegendimage{rdaN10000}
-\addlegendentry{RDA $N = 10000$}
 
-% \addlegendimage{black, solid, mark=x}
-% \addlegendentry{CRDA $N = 100000$}
-% \addlegendimage{rdaN100000}
-% \addlegendentry{RDA $N = 100000$}
+\addlegendimage{green,  dashed, mark=*}
+\addlegendentry{RDA $N = 2500$}
+\addlegendimage{gray,   dashed, mark=square*}
+\addlegendentry{RDA $N = 5000$}
+\addlegendimage{purple, dashed, mark=triangle*}
+\addlegendentry{RDA $N = 10000$}
 \end{axis}
 \end{tikzpicture}
 \vspace{0.5cm}
 
-% ===================== ONE: eps = 0.05 =====================
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ===================== EPSILON = 0.05 ====================
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% --------- (1) k1 vs k2 ----------
 \begin{minipage}[t]{0.33\textwidth}
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    name=mainaxis,
     width=\linewidth,
     height=4.5cm,
     xlabel={$k_2$},
@@ -68,35 +71,20 @@
     xmode=log,
     ymode=log,
     mark repeat=20,
+    cycle list name=crda_rda_cycle,
 ]
-\addplot table [x=k2,y=k1,col sep=comma,trim cells=true] {estimates_k_16_eps5_N2500.csv};
+\addplot table [x=k2,y=k1,col sep=comma] {estimates_k_16_eps5_N2500.csv};
 \addplot table [x=k2,y=k1,col sep=comma] {estimates_k_16_eps5_N5000.csv};
 \addplot table [x=k2,y=k1,col sep=comma] {estimates_k_16_eps5_N10000.csv};
-\addplot [rdaN2500, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N2500.csv};
-\addplot [rdaN5000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N5000.csv};
-\addplot [rdaN10000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N10000.csv};
-% \addplot table [x=k2,y=k1,col sep=comma] {estimates_k_16_eps5_N100000.csv};
+\addplot table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N2500.csv};
+\addplot table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N5000.csv};
+\addplot table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N10000.csv};
 \end{axis}
-
-% \begin{axis}[
-%     at={(mainaxis.south west)},
-%     anchor=south west,
-%     width=\linewidth,
-%     height=4.5cm,
-%     xmode=log,
-%     ymode=log,
-%     axis lines=none,
-%     ticks=none,
-% ]
-% \addplot [rdaN2500, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N2500.csv};
-% \addplot [rdaN5000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N5000.csv};
-% \addplot [rdaN10000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N10000.csv};
-% \addplot [rdaN100000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps5_N100000.csv};
-% \end{axis}
 \end{tikzpicture}
 \end{minipage}%
 \hfill
-% ===================== TWO: eps = 0.10 =====================
+
+% --------- (2) Data Duplication ----------
 \begin{minipage}[t]{0.33\textwidth}
 \centering
 \begin{tikzpicture}
@@ -110,35 +98,20 @@
     xmode=log,
     ymode=log,
     mark repeat=20,
+    cycle list name=crda_rda_cycle,
 ]
 \addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_k_16_eps5_N2500.csv};
 \addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_k_16_eps5_N5000.csv};
 \addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_k_16_eps5_N10000.csv};
-\addplot [rdaN2500, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N2500.csv};
-\addplot [rdaN5000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N5000.csv};
-\addplot [rdaN10000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N10000.csv};
-% \addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_k_16_eps5_N100000.csv};
+\addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N2500.csv};
+\addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N5000.csv};
+\addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N10000.csv};
 \end{axis}
-
-% \begin{axis}[
-%     at={(mainaxis.south west)},
-%     anchor=south west,
-%     width=\linewidth,
-%     height=4.5cm,
-%     xmode=log,
-%     ymode=log,
-%     axis lines=none,
-%     ticks=none,
-% ]
-% \addplot [rdaN2500, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N2500.csv};
-% \addplot [rdaN5000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N5000.csv};
-% \addplot [rdaN10000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N10000.csv};
-% % \addplot [rdaN100000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps5_N100000.csv};
-% \end{axis}
 \end{tikzpicture}
 \end{minipage}%
 \hfill
-% ===================== THREE: eps = 0.10 =====================
+
+% --------- (3) Store Complexity ----------
 \begin{minipage}[t]{0.33\textwidth}
 \centering
 \begin{tikzpicture}
@@ -146,45 +119,35 @@
     width=\linewidth,
     height=4.5cm,
     xlabel={$k_2$},
-    ylabel={$Store\ Complextity$},
+    ylabel={$Store\ Complexity$},
     title={$\epsilon = 0.05, k = 16$},
     grid=major,
     xmode=log,
     ymode=log,
     mark repeat=20,
+    cycle list name=crda_rda_cycle,
 ]
 \addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_k_16_eps5_N2500.csv};
 \addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_k_16_eps5_N5000.csv};
 \addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_k_16_eps5_N10000.csv};
-\addplot [rdaN2500, smooth] table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps5_N2500.csv};
-\addplot [rdaN5000, smooth] table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps5_N5000.csv};
-\addplot [rdaN10000, smooth] table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps5_N10000.csv};
-% \addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_k_16_eps5_N100000.csv};
+\addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps5_N2500.csv};
+\addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps5_N5000.csv};
+\addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps5_N10000.csv};
 \end{axis}
-
-% \begin{axis}[
-%     at={(mainaxis.south west)},
-%     anchor=south west, c.    
-%     height=4.5cm,
-%     xmode=log,
-%     ymode=log,
-%     axis lines=none,
-%     ticks=none,
-% ]
-
-% \addplot [rdaN100000, smooth] table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps5_N100000.csv};
-% \end{axis}
 \end{tikzpicture}
 \end{minipage}
 
 \vspace{0.5cm}
 
-% ===================== ONE: eps = 0.05 =====================
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ===================== EPSILON = 0.10 ====================
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% --------- (4) k1 vs k2 ----------
 \begin{minipage}[t]{0.33\textwidth}
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    name=mainaxis,
     width=\linewidth,
     height=4.5cm,
     xlabel={$k_2$},
@@ -194,35 +157,20 @@
     xmode=log,
     ymode=log,
     mark repeat=20,
+    cycle list name=crda_rda_cycle,
 ]
-\addplot table [x=k2,y=k1,col sep=comma,trim cells=true] {estimates_k_16_eps10_N2500.csv};
+\addplot table [x=k2,y=k1,col sep=comma] {estimates_k_16_eps10_N2500.csv};
 \addplot table [x=k2,y=k1,col sep=comma] {estimates_k_16_eps10_N5000.csv};
 \addplot table [x=k2,y=k1,col sep=comma] {estimates_k_16_eps10_N10000.csv};
-\addplot [rdaN2500, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N2500.csv};
-\addplot [rdaN5000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N5000.csv};
-\addplot [rdaN10000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N10000.csv};
-% \addplot table [x=k2,y=k1,col sep=comma] {estimates_k_16_eps10_N100000.csv};
+\addplot table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N2500.csv};
+\addplot table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N5000.csv};
+\addplot table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N10000.csv};
 \end{axis}
-
-% \begin{axis}[
-%     at={(mainaxis.south west)},
-%     anchor=south west,
-%     width=\linewidth,
-%     height=4.5cm,
-%     xmode=log,
-%     ymode=log,
-%     axis lines=none,
-%     ticks=none,
-% ]
-% \addplot [rdaN2500, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N2500.csv};
-% \addplot [rdaN5000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N5000.csv};
-% \addplot [rdaN10000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N10000.csv};
-% \addplot [rdaN100000, smooth] table [x=k2,y=k1,col sep=comma] {estimates_data_eps10_N100000.csv};
-% \end{axis}
 \end{tikzpicture}
 \end{minipage}%
 \hfill
-% ===================== TWO: eps = 0.10 =====================
+
+% --------- (5) Data Duplication ----------
 \begin{minipage}[t]{0.33\textwidth}
 \centering
 \begin{tikzpicture}
@@ -236,35 +184,20 @@
     xmode=log,
     ymode=log,
     mark repeat=20,
+    cycle list name=crda_rda_cycle,
 ]
 \addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_k_16_eps10_N2500.csv};
 \addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_k_16_eps10_N5000.csv};
 \addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_k_16_eps10_N10000.csv};
-\addplot [rdaN2500, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N2500.csv};
-\addplot [rdaN5000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N5000.csv};
-\addplot [rdaN10000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N10000.csv};
-% \addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_k_16_eps10_N100000.csv};
+\addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N2500.csv};
+\addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N5000.csv};
+\addplot table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N10000.csv};
 \end{axis}
-
-% \begin{axis}[
-%     at={(mainaxis.south west)},
-%     anchor=south west,
-%     width=\linewidth,
-%     height=4.5cm,
-%     xmode=log,
-%     ymode=log,
-%     axis lines=none,
-%     ticks=none,
-% ]
-% \addplot [rdaN2500, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N2500.csv};
-% \addplot [rdaN5000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N5000.csv};
-% \addplot [rdaN10000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N10000.csv};
-% % \addplot [rdaN100000, smooth] table [x=k2,y=data_duplication,col sep=comma] {estimates_data_eps10_N100000.csv};
-% \end{axis}
 \end{tikzpicture}
 \end{minipage}%
 \hfill
-% ===================== THREE: eps = 0.10 =====================
+
+% --------- (6) Store Complexity ----------
 \begin{minipage}[t]{0.33\textwidth}
 \centering
 \begin{tikzpicture}
@@ -272,34 +205,21 @@
     width=\linewidth,
     height=4.5cm,
     xlabel={$k_2$},
-    ylabel={$Store\ Complextity$},
+    ylabel={$Store\ Complexity$},
     title={$\epsilon = 0.1, k = 16$},
     grid=major,
     xmode=log,
     ymode=log,
     mark repeat=20,
+    cycle list name=crda_rda_cycle,
 ]
 \addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_k_16_eps10_N2500.csv};
 \addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_k_16_eps10_N5000.csv};
 \addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_k_16_eps10_N10000.csv};
-\addplot [rdaN2500, smooth] table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps10_N2500.csv};
-\addplot [rdaN5000, smooth] table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps10_N5000.csv};
-\addplot [rdaN10000, smooth] table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps10_N10000.csv};
-% \addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_k_16_eps10_N100000.csv};
+\addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps10_N2500.csv};
+\addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps10_N5000.csv};
+\addplot table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps10_N10000.csv};
 \end{axis}
-
-% \begin{axis}[
-%     at={(mainaxis.south west)},
-%     anchor=south west, c.    
-%     height=4.5cm,
-%     xmode=log,
-%     ymode=log,
-%     axis lines=none,
-%     ticks=none,
-% ]
-
-% \addplot [rdaN100000, smooth] table [x=k2,y=store_complexity,col sep=comma] {estimates_data_eps10_N100000.csv};
-% \end{axis}
 \end{tikzpicture}
 \end{minipage}
 

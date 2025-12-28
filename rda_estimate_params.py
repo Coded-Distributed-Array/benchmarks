@@ -218,9 +218,10 @@ def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, L_m
     Returns:
         The Store operation complexity
     """
+    commitment_size = 48 + 96
     term1 = n_max / (k1 * k2)
     term2 = (3 * n_hon_max * n_max) / (k1 * k2 * k2)
-    return (term1 + term2) * L_msg
+    return (term1 + term2) * (L_msg + commitment_size)
 
 
 
@@ -249,7 +250,7 @@ def generate_rows(epsilon: float, N: int, target_delta: float = 1e-9):
             data_duplication = N / (k2) 
             # join_complexity = calculate_joining_complexity(k1, k2, n_max)
             # get_complexity = calculate_get_complexity(k1, k2, n_max, n_hon_max)
-            store_complexity = calculate_store_complexity(k1, k2, n_max, n_hon_max)
+            store_complexity = calculate_store_complexity(k1, k2, n_max, n_hon_max, L_msg=512)
             rows.append((epsilon, N, k2, k1, data_duplication, store_complexity))
     return rows
 
@@ -266,7 +267,6 @@ if __name__ == "__main__":
         for N in N_values:
             eps = eps_nom / 100
             rows = generate_rows(eps, N, target_delta)
-            print(rows)
 
             if not rows:
                 print(f"[WARN] No data for eps={eps}, N={N}")

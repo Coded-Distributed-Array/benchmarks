@@ -1,64 +1,117 @@
 from grid_core import *
 import matplotlib.pyplot as plt
 
+
+
 if __name__ == "__main__":
-    cols = 50
-    n_total = 5000  # say 10000 nodes and 2500 are honest
+    # ================== Simulation Parameters ==================
+    n_total = 2500
     n_init = 20
     n_warmup = n_total - n_init
-    steps = 10000
-    churn = 100
+    steps = 5000
+    churn = 50
     lifetime_per_party = n_total // churn
 
-    # Range of row values to iterate over
-    row_range = [40, 90]
-
-    # Define different markers and colors for each plot
     markers = ['o', 's', 'D', '^', 'v', '<', '>', 'p', '*', 'h']
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'orange', 'purple', 'brown']
 
-    fig, axes = plt.subplots(1, 3, figsize=(12, 6))  # Three subplots side by side
-    fig.suptitle(f'Protocol Simulation with {cols} columns, {n_total} honest parties, staying for {lifetime_per_party} steps', fontsize=14)
+    # ================== Create 2x2 Figure ==================
+    fig, axes = plt.subplots(2, 2, figsize=(14, 8))
+    fig.suptitle(
+        f'Protocol Simulation ({n_total} honest parties, lifetime {lifetime_per_party} steps)',
+        fontsize=14
+    )
 
-    for i, rows in enumerate(row_range):
-        params = ProtocolParameters(k1=rows, k2=cols, delta_sub=1, m=100)
-        schedule = generate_schedule(n_init=n_init, n_warmup=n_warmup, churn=churn, steps=steps)
-        statistics = simulate_protocol_run(schedule, params)
+    # ================== TOP-LEFT & BOTTOM-LEFT: k2 = 50 ==================
+    k2 = 50
+    rows_list = []
 
-        # Left plot - Corruption Graph
-        # Make relative first
-        corruption_graph_relative = [100 * x / cols for x in statistics.corruption_graph]
-        axes[0].plot(corruption_graph_relative, label=f'Rows = {rows}',
-                     marker=markers[i % len(markers)], color=colors[i % len(colors)], markevery=500)
+    for i, k1 in enumerate(rows_list):
+        params = ProtocolParameters(k1=k1, k2=k2, delta_sub=1, m=100)
+        schedule = generate_schedule(
+            n_init=n_init,
+            n_warmup=n_warmup,
+            churn=churn,
+            steps=steps
+        )
+        stats = simulate_protocol_run(schedule, params)
 
-        # Right plot - Connection Graph
-        axes[1].plot(statistics.connections_graph, label=f'Rows = {rows}',
-                     marker=markers[i % len(markers)], color=colors[i % len(colors)], markevery=500)
+        # Corruption (relative %)
+        corruption_pct = [100 * x / k2 for x in stats.corruption_graph]
+        axes[0, 0].plot(
+            corruption_pct,
+            label=f'k1 = {k1}',
+            marker=markers[i],
+            color=colors[i],
+            markevery=500
+        )
 
-        axes[2].plot(statistics.honest_nodes_columns_graph, label=f'Rows = {rows}',
-                     marker=markers[i % len(markers)], color=colors[i % len(colors)], markevery=500)
+        # Connections
+        axes[1, 0].plot(
+            stats.connections_graph,
+            label=f'k1 = {k1}',
+            marker=markers[i],
+            color=colors[i],
+            markevery=500
+        )
 
-    # Customize left plot
-    axes[0].set_xlabel("Time Steps")
-    axes[0].set_ylabel("Max Fraction of Corrupted Symbols (in %)")
-    axes[0].set_title('Corruption Graphs')
-    axes[0].set_ylim(0, 100)
-    axes[0].legend()
-    axes[0].grid(True)
+    # ================== TOP-RIGHT & BOTTOM-RIGHT: k2 = 100 ==================
+    k2 = 33
+    rows_list = [5]
 
-    # Customize right plot
-    axes[1].set_xlabel("Time Steps")
-    axes[1].set_ylabel("Max Number of Peers")
-    axes[1].set_title('Connection Graphs')
-    axes[1].legend()
-    axes[1].grid(True)
+    for i, k1 in enumerate(rows_list):
+        params = ProtocolParameters(k1=k1, k2=k2, delta_sub=1, m=100)
+        schedule = generate_schedule(
+            n_init=n_init,
+            n_warmup=n_warmup,
+            churn=churn,
+            steps=steps
+        )
+        stats = simulate_protocol_run(schedule, params)
 
-    # Customize third plot
-    axes[2].set_xlabel("Time Steps")
-    axes[2].set_ylabel("Min Honest Nodes in All Columns")
-    axes[2].set_title('Honest Nodes per Column Graphs')
-    axes[2].legend()
-    axes[2].grid(True)
+        # Corruption (relative %)
+        corruption_pct = [100 * x / k2 for x in stats.corruption_graph]
+        axes[0, 1].plot(
+            corruption_pct,
+            label=f'k1 = {k1}',
+            marker=markers[i],
+            color=colors[i],
+            markevery=500
+        )
 
-    plt.tight_layout()
+        # Connections
+        axes[1, 1].plot(
+            stats.connections_graph,
+            label=f'k1 = {k1}',
+            marker=markers[i],
+            color=colors[i],
+            markevery=500
+        )
+
+    # ================== Styling & Labels ==================
+    # --- Corruption plots
+    axes[0, 0].set_title("Our Corruption Graphs (k2 = 50)")
+    axes[0, 1].set_title("RDA Corruption Graphs (k2 = 100)")
+    i = 0
+    for ax in [axes[0, 0], axes[0, 1]]:
+        ax.set_xlabel("Time Steps")
+        ax.set_ylabel("Max Fraction of Corrupted Symbols (%)")
+        ax.set_ylim(0, 100)
+        ax.legend()
+        ax.grid(True)
+        i += 1
+
+    # --- Connection plots
+    axes[1, 0].set_title("Our Connection Graphs (k2 = 50)")
+    axes[1, 1].set_title("RDA Connection Graphs (k2 = 100)")
+    i = 0
+    for ax in [axes[1, 0], axes[1, 1]]:
+        ax.set_xlabel("Time Steps")
+        ax.set_ylabel("Max Number of Peers")
+        ax.legend()        
+        ax.grid(True)
+        i += 1
+
+    # ================== Layout Fix ==================
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.show()
