@@ -144,6 +144,48 @@ def find_max_k2_with_k1_1(
 
     return best_k2
 
+def calculate_joining_complexity(k1: int, k2: int, n_max: int, n_bs: int = 100, t: int = 50, L_msg: int = 1) -> float:
+    """
+    Calculates the complexity of the Join operation.
+
+    Args:
+        k1: k₁ parameter
+        k2: k₂ parameter
+        n_max: maximum number of nodes
+        n_bs: total number of nodes (default: 100)
+        t: used number of bootstrap nodes (default: 50)
+        L_msg: message length (default: 1)
+
+    Returns:
+        The Join operation complexity
+    """
+    term1 = 3 * t
+    term2 = t * n_bs
+    term3 = (t * n_max) / k1
+    term4 = ((t + 4) * n_max * k2 - 2 * n_max + n_max * n_max) / (k2 * k2)
+    return (term1 + term2 + term3 + term4) * 1
+
+def calculate_get_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, K: int, L_msg: int = 1) -> float:
+    """
+    Calculates the complexity of the Get operation.
+
+    Args:
+        k1: k₁ parameter
+        k2: k₂ parameter
+        n_max: maximum number of nodes
+        n_hon_max: maximum number of honest nodes
+        L_msg: message length (default: 1)
+
+    Returns:
+        The Get operation complexity
+    """
+    proof_size = 48
+    term1 = n_max / (k1 * k2)
+    term2 = (n_hon_max) / (k1 * k2) * (n_max / k2)
+    term3 = n_hon_max / k2
+    term4 = n_hon_max / (k1 * k2)
+    return (term1 + term2) * 2 + (term3) * (L_msg / K + proof_size) + (term4) * (L_msg + proof_size * K)
+
 def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, K: int, L_msg: int = 1) -> float:
     """
     Calculates the expected communication complexity of the STORE operation.
@@ -151,10 +193,10 @@ def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, K: 
     Formula:
         (n_max/(k1*k2) * L_msg + 3*n_hon_max*n_max/(k1*k2**2)) * L_msg
     """
-    commitment_size = 48 + 96
-    term1 = n_max / (k1 * k2) * (L_msg + commitment_size)
-    term2 = (3 * n_hon_max * n_max) / (k1 * (k2 ** 2)) * (L_msg / K + 48 + 96)
-    return term1 + term2
+    proof_size = 48
+    term1 = n_max / (k1 * k2) # honest in a cell
+    term2 = (n_max / k2) * term1 # honest in a column * honest in a cell
+    return term1 * (L_msg + proof_size) + term2 * (L_msg / K + proof_size)
 
 def generate_rows(
     epsilon: float,
@@ -178,9 +220,11 @@ def generate_rows(
         k1 = find_max_k1(k2, epsilon, N, k_chunks, target_delta)
         if k1 is None:
             continue
-        data_duplication = N / (k2 * k_chunks) 
+        data_duplication = N / (k2 * k_chunks)
+        join_complexity = calculate_joining_complexity(k1, k2, n_max)
+        get_complexity = calculate_get_complexity(k1, k2, n_max, n_hon_max, k_chunks)
         store_complexity = calculate_store_complexity(k1, k2, n_max, n_hon_max, k_chunks, L_msg=512)
-        rows.append((k_chunks, epsilon, N, k2, k1, data_duplication, store_complexity))
+        rows.append((k_chunks, epsilon, N, k2, k1, data_duplication, store_complexity, get_complexity, join_complexity))
 
     return rows
 
@@ -189,7 +233,7 @@ def write_rows(
     rows: Sequence[Tuple[int, float, int, int, int, float, float]],
     filename: str,
 ) -> None:
-    headers = ["k", "epsilon", "N", "k2", "k1", "data_duplication", "store_complexity"]
+    headers = ["k", "epsilon", "N", "k2", "k1", "data_duplication", "store_complexity", "get_complexity", "join_complexity"]
     with open(filename, mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(headers)
@@ -197,7 +241,7 @@ def write_rows(
 
 
 if __name__ == "__main__":
-    N_values = [2500, 5000, 10000, 100000]
+    N_values = [2500, 5000, 10000]
     epsilon_nominator_values = [5, 10]
     target_delta = 1e-9
     k_values = [8, 16]
@@ -210,6 +254,6 @@ if __name__ == "__main__":
                 if not rows:
                     continue
 
-                filename = f"estimates_k_{k_chunks}_eps{eps_nom}_N{N}.csv"
+                filename = f"results/robustcda/estimates_k_{k_chunks}_eps{eps_nom}_N{N}.csv"
                 write_rows(rows, filename)
                 print(f"Data written to {filename}")

@@ -183,8 +183,7 @@ def calculate_joining_complexity(k1: int, k2: int, n_max: int, n_bs: int = 100, 
     term2 = t * n_bs
     term3 = (t * n_max) / k1
     term4 = ((t + 4) * n_max * k2 - 2 * n_max + n_max * n_max) / (k2 * k2)
-
-    return (term1 + term2 + term3 + term4) * L_msg
+    return (term1 + term2 + term3 + term4) * 1
 
 def calculate_get_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, L_msg: int = 1) -> float:
     """
@@ -200,9 +199,10 @@ def calculate_get_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, L_msg
     Returns:
         The Get operation complexity
     """
+    proof_size = 48
     term1 = n_max / (k1 * k2)
     term2 = (n_hon_max) / (k1 * k2)
-    return (term1 + term2) * L_msg
+    return term1 * 2 + term2 * (L_msg + proof_size)
 
 def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, L_msg: int = 1) -> float:
     """
@@ -218,10 +218,10 @@ def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, L_m
     Returns:
         The Store operation complexity
     """
-    commitment_size = 48 + 96
-    term1 = n_max / (k1 * k2)
-    term2 = (3 * n_hon_max * n_max) / (k1 * k2 * k2)
-    return (term1 + term2) * (L_msg + commitment_size)
+    proof_size = 48
+    term1 = n_max / (k1 * k2) # honest in a cell
+    term2 = (n_max / k2) * term1 # honest in a column * honest in a cell
+    return (term1 + term2) * (L_msg + proof_size)
 
 
 
@@ -248,18 +248,18 @@ def generate_rows(epsilon: float, N: int, target_delta: float = 1e-9):
         if k1 is not None:
             # we have found a valid k1, now compute complexities
             data_duplication = N / (k2) 
-            # join_complexity = calculate_joining_complexity(k1, k2, n_max)
-            # get_complexity = calculate_get_complexity(k1, k2, n_max, n_hon_max)
+            join_complexity = calculate_joining_complexity(k1, k2, n_max)
+            get_complexity = calculate_get_complexity(k1, k2, n_max, n_hon_max)
             store_complexity = calculate_store_complexity(k1, k2, n_max, n_hon_max, L_msg=512)
-            rows.append((epsilon, N, k2, k1, data_duplication, store_complexity))
+            rows.append((epsilon, N, k2, k1, data_duplication, store_complexity, get_complexity, join_complexity))
     return rows
 
 
 
 if __name__ == "__main__":
 
-    headers = ["epsilon", "N", "k2", "k1", "data_duplication", "store_complexity"]
-    N_values = [2500, 5000, 10000, 100000]
+    headers = ["epsilon", "N", "k2", "k1", "data_duplication", "store_complexity", "get_complexity", "join_complexity"]
+    N_values = [2500, 5000, 10000]
     epsilon_nominator_values = [5, 10]
     target_delta = 1e-9
 
@@ -272,12 +272,12 @@ if __name__ == "__main__":
                 print(f"[WARN] No data for eps={eps}, N={N}")
                 continue
 
-            filename = f"estimates_data_eps{eps_nom}_N{N}.csv"
+            filename = f"results/rda/estimates_data_eps{eps_nom}_N{N}.csv"
 
             clean_rows = [
                 row for row in rows
                 if row is not None
-                and len(row) == 6
+                and len(row) == 8
                 and all(v is not None for v in row)
             ]
 
