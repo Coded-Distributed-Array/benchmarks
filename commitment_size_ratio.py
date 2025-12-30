@@ -13,7 +13,7 @@ for chunk_size in chunk_sizes:
     ratios = []
     for n in n_values:
         block_size = (n * n) * CELL_SIZE
-        commitment_size = n * chunk_size * COMMITMENT_UNIT_SIZE
+        commitment_size = n * (chunk_size + 1) * COMMITMENT_UNIT_SIZE
         ratio = commitment_size / block_size
         ratios.append(ratio)
     plt.plot(n_values, ratios, label=f"chunk_size={chunk_size}")

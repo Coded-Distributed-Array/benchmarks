@@ -1,6 +1,8 @@
 import math
 import csv
 
+PARAMS_SIZE = 4
+
 def binary_entropy(epsilon: float) -> float:
     """
     Calculates the binary entropy function h(ε) = -ε log₂(ε) - (1-ε)log₂(1-ε)
@@ -202,7 +204,7 @@ def calculate_get_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, L_msg
     proof_size = 48
     term1 = n_max / (k1 * k2)
     term2 = (n_hon_max) / (k1 * k2)
-    return term1 * 2 + term2 * (L_msg + proof_size)
+    return term1 * PARAMS_SIZE + term2 * (L_msg + proof_size + PARAMS_SIZE)
 
 def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, L_msg: int = 1) -> float:
     """
@@ -221,7 +223,7 @@ def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, L_m
     proof_size = 48
     term1 = n_max / (k1 * k2) # honest in a cell
     term2 = (n_max / k2) * term1 # honest in a column * honest in a cell
-    return (term1 + term2) * (L_msg + proof_size)
+    return (term1 + term2) * (L_msg + proof_size + PARAMS_SIZE)
 
 
 

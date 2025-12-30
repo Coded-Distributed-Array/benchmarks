@@ -10,6 +10,8 @@ SECONDS_PER_YEAR = 31557600
 T_ROUNDS = int(10 * SECONDS_PER_YEAR / SECONDS_PER_ROUND)
 DELTA_OVERLAP_ROUNDS = int(6 * SECONDS_PER_HOUR / SECONDS_PER_ROUND)
 
+PARAMS_SIZE = 4
+
 def binary_entropy(epsilon: float) -> float:
     """
     Calculates the binary entropy function h(ε) = -ε log₂(ε) - (1-ε)log₂(1-ε)
@@ -184,7 +186,7 @@ def calculate_get_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, K: in
     term2 = (n_hon_max) / (k1 * k2) * (n_max / k2)
     term3 = n_hon_max / k2
     term4 = n_hon_max / (k1 * k2)
-    return (term1 + term2) * 2 + (term3) * (L_msg / K + proof_size) + (term4) * (L_msg + proof_size * K)
+    return (term1 + term2) * PARAMS_SIZE + (term3) * (L_msg / K + proof_size) + (term4) * (L_msg + PARAMS_SIZE + proof_size)
 
 def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, K: int, L_msg: int = 1) -> float:
     """
@@ -193,10 +195,10 @@ def calculate_store_complexity(k1: int, k2: int, n_max: int, n_hon_max: int, K: 
     Formula:
         (n_max/(k1*k2) * L_msg + 3*n_hon_max*n_max/(k1*k2**2)) * L_msg
     """
-    proof_size = 48
+    proof_size = 48 # 48 is proof size and 48 is params size, 2 bytes for i, 2 bytes for j
     term1 = n_max / (k1 * k2) # honest in a cell
     term2 = (n_max / k2) * term1 # honest in a column * honest in a cell
-    return term1 * (L_msg + proof_size) + term2 * (L_msg / K + proof_size)
+    return term1 * (L_msg + proof_size + PARAMS_SIZE) + term2 * (L_msg / K + proof_size + PARAMS_SIZE)
 
 def generate_rows(
     epsilon: float,

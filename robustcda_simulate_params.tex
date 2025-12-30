@@ -117,6 +117,51 @@
 \addplot+[mark repeat=20] table[x=k2,y=store_complexity,col sep=comma]{results/rda/estimates_data_eps5_N5000.csv};
 \addplot+[mark repeat=20] table[x=k2,y=store_complexity,col sep=comma]{results/rda/estimates_data_eps5_N10000.csv};
 
+% -------- (4) Store Complexity --------
+\nextgroupplot[
+    xlabel={$k_2$},
+    ylabel={Get Complexity},
+    title={$\epsilon = 0.05,\; k = 16$},
+]
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N2500.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N5000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N10000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/rda/estimates_data_eps5_N2500.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/rda/estimates_data_eps5_N5000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/rda/estimates_data_eps5_N10000.csv};
+
+% -------- (5) Store Complexity --------
+\nextgroupplot[
+    xlabel={$k_2$},
+    ylabel={Join Complexity},
+    title={$\epsilon = 0.05,\; k = 16$},
+]
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N2500.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N5000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N10000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/rda/estimates_data_eps5_N2500.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/rda/estimates_data_eps5_N5000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/rda/estimates_data_eps5_N10000.csv};
+
+\end{groupplot}
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\begin{groupplot}[
+    group style={
+        group size=3 by 2,
+        horizontal sep=1.6cm,
+        vertical sep=1.6cm
+    },
+    width=0.33\textwidth,
+    height=4.8cm,
+    grid=major,
+    xmode=log,
+    ymode=log,
+    cycle list name=crda_rda_cycle,
+]
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ===================== EPS = 0.10 ========================
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,6 +204,32 @@
 \addplot+[mark repeat=20] table[x=k2,y=store_complexity,col sep=comma]{results/rda/estimates_data_eps10_N2500.csv};
 \addplot+[mark repeat=20] table[x=k2,y=store_complexity,col sep=comma]{results/rda/estimates_data_eps10_N5000.csv};
 \addplot+[mark repeat=20] table[x=k2,y=store_complexity,col sep=comma]{results/rda/estimates_data_eps10_N10000.csv};
+
+% -------- (7) Store Complexity --------
+\nextgroupplot[
+    xlabel={$k_2$},
+    ylabel={Get Complexity},
+    title={$\epsilon = 0.05,\; k = 16$},
+]
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N2500.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N5000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N10000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/rda/estimates_data_eps10_N2500.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/rda/estimates_data_eps10_N5000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=get_complexity,col sep=comma]{results/rda/estimates_data_eps10_N10000.csv};
+
+% -------- (8) Store Complexity --------
+\nextgroupplot[
+    xlabel={$k_2$},
+    ylabel={Join Complexity},
+    title={$\epsilon = 0.05,\; k = 16$},
+]
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N2500.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N5000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/robustcda/estimates_k_16_eps5_N10000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/rda/estimates_data_eps10_N2500.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/rda/estimates_data_eps10_N5000.csv};
+\addplot+[mark repeat=20] table[x=k2,y=join_complexity,col sep=comma]{results/rda/estimates_data_eps10_N10000.csv};
 
 \end{groupplot}
 \end{tikzpicture}
